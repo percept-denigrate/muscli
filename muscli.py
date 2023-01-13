@@ -43,3 +43,12 @@ elif len(sys.argv) == 4 and sys.argv[1] == 'incr':
                 workout_new[j] = exercise_new
                 with open(path + str(i), 'w') as file:    #updates workout file
                     file.writelines(workout_new)
+
+elif len(sys.argv) == 2 and sys.argv[1] == 'shift':
+    with open(path + 'data', 'r') as file:    #reads data file
+        lines = file.readlines()
+    day = lines[1][0:-1]
+    data_new = lines[:]
+    data_new[1] = str(int(day)-1) + '\n'
+    with open(path + 'data', 'w') as file:    #updates data file
+        file.writelines(data_new)
