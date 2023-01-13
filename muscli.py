@@ -21,3 +21,16 @@ if len(sys.argv) == 1:
 
     with open(path + new_number, 'r') as file: #prints workout
         print(file.read())
+
+elif len(sys.argv) == 4 and sys.argv[1] == 'incr':
+    with open(path + 'data', 'r') as file: #reads data file
+        lines = file.readlines()
+    n = int(lines[0][0:-1])
+
+    for i in range(n): #search in each workout
+        with open(path + str(i), 'r') as file: 
+            workout = file.readlines()
+        for exercise in workout: #check each line
+            words = exercise[0:-1].split(' ')
+            if words[0] == sys.argv[2]: #when exercise is found
+                print(words[0])
