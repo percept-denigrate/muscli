@@ -46,3 +46,9 @@ elif len(sys.argv) == 2 and sys.argv[1] == 'shift':
     data_new[1] = str(day-1) + '\n'
     with open(path + 'data', 'w') as file:    #updates data file
         file.writelines(data_new)
+
+elif len(sys.argv) == 2 and sys.argv[1] == 'unshift':
+    data_new = lines[:]
+    data_new[1] = str(day+1) + '\n'
+    with open(path + 'data', 'w') as file:    #updates data file
+        file.writelines(data_new)
