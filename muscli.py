@@ -33,11 +33,8 @@ elif len(sys.argv) == 4 and sys.argv[1] == 'incr':
             words = workout[j][0:-1].split(' ')
             if words[0] == sys.argv[2]:    #when exercise is found
                 workout_new = workout[:]
-                exercise_new = ''    #recreates the line with the new weight
-                for k in range(len(words)-1):
-                    exercise_new += words[k] + ' '
-                exercise_new += str(float(words[-1]) + float(sys.argv[3]))
-                exercise_new += '\n'
+                exercise_new = ' '.join(words[0:-1]) + ' '    #recreates the line with the new weight
+                exercise_new += str(float(words[-1]) + float(sys.argv[3])) + '\n'
                 print(exercise_new)
                 workout_new[j] = exercise_new
                 with open(path + str(i), 'w') as file:    #updates workout file
