@@ -4,49 +4,49 @@ import os
 import sys
 import datetime as dt
 
-path = '/home/' + os.environ.get('USER') + '/.muscli/'
-date_format = '%Y/%m/%d'
+DATA_DIRECTORY = '/home/' + os.environ.get('USER') + '/.muscli/'
+DATE_FORMAT = '%Y/%m/%d'
 
-def update(data_new):
-    with open(path + 'data', 'w') as file:
-        file.writelines(data_new)
+def update_data_file(new_data_lines):
+    with open(DATA_DIRECTORY + 'data', 'w') as file:
+        file.writelines(new_data_lines)
 
-with open(path + 'data', 'r') as file:    #reads data file
-    lines = file.readlines()
-n = int(lines[0][0:-1])
-day = int(lines[1][0:-1])
-last_called = lines[2][0:-1]
+
+with open(DATA_DIRECTORY + 'data', 'r') as file:
+    data_lines = file.readlines()
+number_of_workouts = int(data_lines[0][0:-1])
+current_workout_index = int(data_lines[1][0:-1])
+last_date_called = data_lines[2][0:-1]
 
 if len(sys.argv) == 1:
-    diff = dt.date.today()-dt.datetime.strptime(last_called,date_format).date()    #number of days since last use
-    day_new = str((day+diff.days) % int(lines[0][0:-1]))
-    data_new = [lines[0], day_new +'\n', dt.date.today().strftime(date_format) + '\n']
-    update(data_new)
-    with open(path + day_new, 'r') as file:    #prints workout
+    days_since_last_use = dt.date.today() - dt.datetime.strptime(last_date_called, DATE_FORMAT).date()
+    new_current_workout_index = str((current_workout_index + days_since_last_use.days) % number_of_workouts)
+    new_data_lines = [data_lines[0], new_current_workout_index +'\n', dt.date.today().strftime(DATE_FORMAT) + '\n']
+    update_data_file(new_data_lines)
+    with open(DATA_DIRECTORY + new_current_workout_index, 'r') as file:
         print(file.read())
 
 elif len(sys.argv) == 4 and sys.argv[1] == 'incr':
-    for i in range(n):    #search in each workout
-        with open(path + str(i), 'r') as file: 
-            workout = file.readlines()
-        for j in range(len(workout)):    #check each line
-            words = workout[j][0:-1].split(' ')
-            if words[0] == sys.argv[2]:    #when exercise is found
-                workout_new = workout[:]
-                exercise_new = ' '.join(words[0:-1]) + ' '    #recreates the line with the new weight
-                exercise_new += str(float(words[-1]) + float(sys.argv[3])) + '\n'
-                print(exercise_new)
-                workout_new[j] = exercise_new
-                with open(path + str(i), 'w') as file:    #updates workout file
-                    file.writelines(workout_new)
+    for i in range(number_of_workouts):
+        with open(DATA_DIRECTORY + str(i), 'r') as file:
+            workout_lines = file.readlines()
+        for j in range(len(workout_lines)):
+            words = workout_lines[j][0:-1].split(' ')
+            if words[0] == sys.argv[2]:
+                new_workout_lines = workout_lines[:]
+                updated_exercise_line = ' '.join(words[0:-1]) + ' ' + str(float(words[-1]) + float(sys.argv[3])) + '\n'
+                print('Exercise updated')
+                new_workout_lines[j] = updated_exercise_line
+                with open(DATA_DIRECTORY + str(i), 'w') as file:
+                    file.writelines(new_workout_lines)
 
 elif len(sys.argv) == 2 and sys.argv[1] == 'shift':
-    data_new = lines[:]
-    data_new[1] = str(day-1) + '\n'
-    update(data_new)
+    new_data_lines = data_lines[:]
+    new_data_lines[1] = str(current_workout_index - 1) + '\n'
+    update_data_file(new_data_lines)
 
 elif len(sys.argv) == 2 and sys.argv[1] == 'unshift':
-    data_new = lines[:]
-    data_new[1] = str(day+1) + '\n'
-    update(data_new)
+    new_data_lines = data_lines[:]
+    new_data_lines[1] = str(current_workout_index + 1) + '\n'
+    update_data_file(new_data_lines)
 
